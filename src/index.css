@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-stone-900 text-stone-100 font-sans antialiased overflow-x-hidden;
+  }
+}
+
+.typewriter-cursor::after {
+  content: "|";
+  animation: cursor 1s infinite step-start;
+}
+
+@keyframes cursor {
+  50% {
+    opacity: 0;
+  }
+}
