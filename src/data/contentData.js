@@ -2,12 +2,14 @@ import taylorCover from '../assets/img/taylor-swift-cover.jpg';
 import loverAudio from '../assets/audio/lover.mp3';
 import onRepeatImg from '../assets/img/on-repeat-img.jpg';
 import revealImg from '../assets/img/reveal-img.jpg';
+import mainAudio1 from '../assets/audio/main-audio-1.mp3';
+import mainAudio2 from '../assets/audio/main-audio-2.mp3';
 
 export const content = {
   partnerName: "Pasangan",
   introText: "Tahun ini penuh cerita...",
   minutes: 204480, // Example: 365 days * 24 * 60
-  bgMusic: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Default BGM
+  bgMusic: [mainAudio1, mainAudio2], 
   topSong: {
     title: "Lover",
     artist: "Taylor Swift",

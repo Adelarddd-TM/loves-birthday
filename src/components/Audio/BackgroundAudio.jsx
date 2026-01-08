@@ -6,6 +6,7 @@ const BackgroundAudio = ({ isPlaying, currentSlide }) => {
   const bgmRef = useRef(null);
   const anthemRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [currentBgmIndex, setCurrentBgmIndex] = useState(0);
 
   useEffect(() => {
     // Volume management
@@ -14,33 +15,47 @@ const BackgroundAudio = ({ isPlaying, currentSlide }) => {
   }, [isMuted]);
 
   useEffect(() => {
+    // Attempt play when valid
+    const bgm = bgmRef.current;
+    if (isPlaying && bgm && currentSlide !== 4) {
+        bgm.play().catch(e => console.log("BGM Play error:", e));
+    }
+  }, [currentBgmIndex, isPlaying, currentSlide]);
+
+  useEffect(() => {
     if (!isPlaying) return;
 
     const bgm = bgmRef.current;
     const anthem = anthemRef.current;
 
-    // Slide 4 is the Anthem slide (0:Start, 1:Intro, 2:Minutes, 3:Peak, 4:Anthem)
-    // Actually, check App.jsx slide order.
-    // 0: Start, 1: Intro, 2: Minutes, 3: Peak, 4: Anthem. Correct.
-    
+    // Slide 4 is the Anthem slide
     if (currentSlide === 4) {
-      // Play Anthem, Pause BGM
       if (bgm) bgm.pause();
       if (anthem) {
-        anthem.currentTime = 0; // Restart song? or just play? Let's restart for impact.
+        anthem.currentTime = 0;
         anthem.play().catch(e => console.log("Anthem play failed:", e));
       }
     } else {
-      // Play BGM, Pause Anthem
       if (anthem) {
         anthem.pause();
-        anthem.currentTime = 0; // Reset
+        anthem.currentTime = 0;
       }
       if (bgm && bgm.paused) {
         bgm.play().catch(e => console.log("BGM play failed:", e));
       }
     }
   }, [currentSlide, isPlaying]);
+
+  const handleBgmEnded = () => {
+    // Switch to next track in array (Looping)
+    if (Array.isArray(content.bgMusic)) {
+       setCurrentBgmIndex((prev) => (prev + 1) % content.bgMusic.length);
+    }
+  };
+
+  const bgmSource = Array.isArray(content.bgMusic) 
+    ? content.bgMusic[currentBgmIndex] 
+    : content.bgMusic;
 
   const toggleMute = (e) => {
     e.stopPropagation(); 
@@ -49,7 +64,12 @@ const BackgroundAudio = ({ isPlaying, currentSlide }) => {
 
   return (
     <>
-      <audio ref={bgmRef} loop src={content.bgMusic} />
+      <audio 
+        ref={bgmRef} 
+        src={bgmSource} 
+        loop={!Array.isArray(content.bgMusic)} // Only loop single if not array (array loops manually via onEnded)
+        onEnded={handleBgmEnded}
+      />
       <audio ref={anthemRef} src={content.topSong.audioUrl} />
       
       {isPlaying && (
